@@ -117,6 +117,99 @@
 
 
 
+
+
+
+// One graph on each screen and scrollview
+// import { useEffect, useRef } from "react";
+// import { useParams } from "react-router-dom";
+// import Graph from "./Graph";
+// import { useTimeRange } from "../../contexts/TimeRangeContext";
+
+// const COUNTRY_GRAPHS: Record<string, string[]> = {
+//   uk: [
+//     `https://grafana.datman.tools/d-solo/kugxgcc/live-wow-per-country?orgId=1&timezone=Europe%2FLondon&refresh=5m&panelId=panel-5&__feature.dashboardSceneSolo=true`,
+//     `https://grafana.datman.tools/d-solo/kugxgcc/live-wow-per-country?orgId=1&ezone=Europe%2FLondon&refresh=5m&panelId=panel-1&__feature.dashboardSceneSolo=true`,
+//     `https://grafana.datman.tools/d-solo/kugxgcc/live-wow-per-country?orgId=1&timezone=Europe%2FLondon&refresh=5m&panelId=panel-3&__feature.dashboardSceneSolo=true`,
+//     `https://grafana.datman.tools/d-solo/kugxgcc/live-wow-per-country?orgId=1&timezone=Europe%2FLondon&refresh=5m&panelId=panel-2&__feature.dashboardSceneSolo=true`,
+//     `https://grafana.datman.tools/d-solo/kugxgcc/live-wow-per-country?orgId=1&timezone=Europe%2FLondon&refresh=5m&panelId=panel-4&__feature.dashboardSceneSolo=true`,
+//   ],
+//   aus: [
+//     `https://grafana.datman.tools/d-solo/kugxgcc/live-wow-per-country?orgId=1&timezone=Europe%2FLondon&refresh=5m&panelId=panel-6&__feature.dashboardSceneSolo=true`,
+//     `https://grafana.datman.tools/d-solo/kugxgcc/live-wow-per-country?orgId=1&timezone=Europe%2FLondon&refresh=5m&panelId=panel-7&__feature.dashboardSceneSolo=true`,
+//     `https://grafana.datman.tools/d-solo/kugxgcc/live-wow-per-country?orgId=1&timezone=Europe%2FLondon&refresh=5m&panelId=panel-8&__feature.dashboardSceneSolo=true`,
+//     `https://grafana.datman.tools/d-solo/kugxgcc/live-wow-per-country?orgId=1&timezone=Europe%2FLondon&refresh=5m&panelId=panel-9&__feature.dashboardSceneSolo=true`,
+//     `https://grafana.datman.tools/d-solo/kugxgcc/live-wow-per-country?orgId=1&timezone=Europe%2FLondon&refresh=5m&panelId=panel-10&__feature.dashboardSceneSolo=true`,
+//   ],
+// };
+
+// const INTERVAL_MS = 30000;
+
+// const GraphContainerWOW = () => {
+//   const { range } = useTimeRange();
+//   const { country } = useParams();
+//   const graphUrls = COUNTRY_GRAPHS[country ?? "uk"] ?? COUNTRY_GRAPHS["uk"];
+
+//   const TIME_RANGE_MAP: Record<string, number> = {
+//     last_5m: 5 * 60 * 1000,
+//     last_15m: 15 * 60 * 1000,
+//     last_30m: 30 * 60 * 1000,
+//     last_1h: 1 * 60 * 60 * 1000,
+//     last_3h: 3 * 60 * 60 * 1000,
+//     last_6h: 6 * 60 * 60 * 1000,
+//     last_12h: 12 * 60 * 60 * 1000,
+//     last_24h: 24 * 60 * 60 * 1000,
+//     last_7d: 7 * 24 * 60 * 60 * 1000,
+//     last_30d: 30 * 24 * 60 * 60 * 1000,
+//   };
+
+//   const applyTimeRange = (url: string) => {
+//     const now = Date.now();
+//     const from = now - TIME_RANGE_MAP[range];
+//     return `${url}&from=${from}&to=${now}`;
+//   };
+
+//   const containerRef = useRef<HTMLDivElement | null>(null);
+
+//   useEffect(() => {
+//     let index = 0;
+//     const interval = setInterval(() => {
+//       if (!containerRef.current) return;
+
+//       index = (index + 1) % graphUrls.length;
+
+//       containerRef.current.scrollTo({
+//         top: index * window.innerHeight,
+//         behavior: "smooth",
+//       });
+//     }, INTERVAL_MS);
+
+//     return () => clearInterval(interval);
+//   }, [graphUrls.length]);
+
+//   return (
+//     <div
+//       ref={containerRef}
+//       className="overflow-y-scroll snap-y snap-mandatory h-[calc(100vh-4rem)]"
+//     >
+//       {graphUrls.map((url, idx) => (
+//         <div key={idx} className="snap-start h-[calc(100vh-4rem)]">
+//           <Graph iframeSrc={applyTimeRange(url)} fullScreen={true} />
+//         </div>
+//       ))}
+//     </div>
+//   );
+// };
+
+// export default GraphContainerWOW;
+
+
+
+
+
+
+
+//4 graphs on one screen then one graph on full screen with a scroll effect
 import { useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import Graph from "./Graph";
@@ -124,18 +217,18 @@ import { useTimeRange } from "../../contexts/TimeRangeContext";
 
 const COUNTRY_GRAPHS: Record<string, string[]> = {
   uk: [
-    `https://grafana.datman.tools/d-solo/kugxgcc/live-wow-per-country?orgId=1&timezone=Europe%2FLondon&refresh=5m&panelId=panel-5&__feature.dashboardSceneSolo=true`,
-    `https://grafana.datman.tools/d-solo/kugxgcc/live-wow-per-country?orgId=1&ezone=Europe%2FLondon&refresh=5m&panelId=panel-1&__feature.dashboardSceneSolo=true`,
-    `https://grafana.datman.tools/d-solo/kugxgcc/live-wow-per-country?orgId=1&timezone=Europe%2FLondon&refresh=5m&panelId=panel-3&__feature.dashboardSceneSolo=true`,
-    `https://grafana.datman.tools/d-solo/kugxgcc/live-wow-per-country?orgId=1&timezone=Europe%2FLondon&refresh=5m&panelId=panel-2&__feature.dashboardSceneSolo=true`,
-    `https://grafana.datman.tools/d-solo/kugxgcc/live-wow-per-country?orgId=1&timezone=Europe%2FLondon&refresh=5m&panelId=panel-4&__feature.dashboardSceneSolo=true`,
+    `https://grafana.datman.tools/d-solo/kugxgcc/live-wow-per-country?orgId=1&panelId=panel-1`,
+    `https://grafana.datman.tools/d-solo/kugxgcc/live-wow-per-country?orgId=1&panelId=panel-3`,
+    `https://grafana.datman.tools/d-solo/kugxgcc/live-wow-per-country?orgId=1&panelId=panel-2`,
+    `https://grafana.datman.tools/d-solo/kugxgcc/live-wow-per-country?orgId=1&panelId=panel-4`,
+    `https://grafana.datman.tools/d-solo/kugxgcc/live-wow-per-country?orgId=1&panelId=panel-5`,
   ],
   aus: [
-    `https://grafana.datman.tools/d-solo/kugxgcc/live-wow-per-country?orgId=1&timezone=Europe%2FLondon&refresh=5m&panelId=panel-6&__feature.dashboardSceneSolo=true`,
-    `https://grafana.datman.tools/d-solo/kugxgcc/live-wow-per-country?orgId=1&timezone=Europe%2FLondon&refresh=5m&panelId=panel-7&__feature.dashboardSceneSolo=true`,
-    `https://grafana.datman.tools/d-solo/kugxgcc/live-wow-per-country?orgId=1&timezone=Europe%2FLondon&refresh=5m&panelId=panel-8&__feature.dashboardSceneSolo=true`,
-    `https://grafana.datman.tools/d-solo/kugxgcc/live-wow-per-country?orgId=1&timezone=Europe%2FLondon&refresh=5m&panelId=panel-9&__feature.dashboardSceneSolo=true`,
-    `https://grafana.datman.tools/d-solo/kugxgcc/live-wow-per-country?orgId=1&timezone=Europe%2FLondon&refresh=5m&panelId=panel-10&__feature.dashboardSceneSolo=true`,
+    `https://grafana.datman.tools/d-solo/kugxgcc/live-wow-per-country?orgId=1&panelId=panel-7`,
+    `https://grafana.datman.tools/d-solo/kugxgcc/live-wow-per-country?orgId=1&panelId=panel-8`,
+    `https://grafana.datman.tools/d-solo/kugxgcc/live-wow-per-country?orgId=1&panelId=panel-9`,
+    `https://grafana.datman.tools/d-solo/kugxgcc/live-wow-per-country?orgId=1&panelId=panel-10`,
+    `https://grafana.datman.tools/d-solo/kugxgcc/live-wow-per-country?orgId=1&panelId=panel-6`,
   ],
 };
 
@@ -162,34 +255,47 @@ const GraphContainerWOW = () => {
   const applyTimeRange = (url: string) => {
     const now = Date.now();
     const from = now - TIME_RANGE_MAP[range];
-    return `${url}&from=${from}&to=${now}`;
+    return `${url}&from=${from}&to=${now}&refresh=5m&__feature.dashboardSceneSolo=true`;
   };
 
   const containerRef = useRef<HTMLDivElement | null>(null);
 
+  const firstFour = graphUrls.slice(0, 4);
+  const leftover = graphUrls.slice(4); // usually 1
+
+  const sectionsCount = 1 + leftover.length; // 1 grid + N leftover
+
   useEffect(() => {
-    let index = 0;
+    let sectionIndex = 0;
     const interval = setInterval(() => {
       if (!containerRef.current) return;
 
-      index = (index + 1) % graphUrls.length;
+      sectionIndex = (sectionIndex + 1) % sectionsCount;
 
       containerRef.current.scrollTo({
-        top: index * window.innerHeight,
+        top: sectionIndex * window.innerHeight,
         behavior: "smooth",
       });
     }, INTERVAL_MS);
 
     return () => clearInterval(interval);
-  }, [graphUrls.length]);
+  }, [sectionsCount]);
 
   return (
     <div
       ref={containerRef}
       className="overflow-y-scroll snap-y snap-mandatory h-[calc(100vh-4rem)]"
     >
-      {graphUrls.map((url, idx) => (
-        <div key={idx} className="snap-start h-[calc(100vh-4rem)]">
+      {/* Screen 1: 4 Graphs Grid */}
+      <div className="snap-start grid grid-cols-2 gap-0 h-[calc(100vh-4rem)]">
+        {firstFour.map((url, i) => (
+          <Graph key={i} iframeSrc={applyTimeRange(url)} fullScreen={false} />
+        ))}
+      </div>
+
+      {/* Screen 2+: One Graph Per Screen */}
+      {leftover.map((url, i) => (
+        <div key={i} className="snap-start h-[calc(100vh-4rem)]">
           <Graph iframeSrc={applyTimeRange(url)} fullScreen={true} />
         </div>
       ))}

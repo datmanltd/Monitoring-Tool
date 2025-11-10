@@ -14,19 +14,45 @@ const Navbar = () => {
   const location = useLocation();
   const { range, setRange } = useTimeRange();
 
-  const currentPath = location.pathname.split("/")[1]; 
+  const currentPath = location.pathname.split("/")[1];
   const title = PAGE_TITLES[currentPath] || "Dashboard";
 
-  return (
-    <nav className="bg-gray-800 text-white px-6 py-4 flex items-center gap-6 border-b h-18 border-gray-300">
-      <img src={logo} alt="Logo" className="h-8" />
-      <h1 className="text-xl 2xl:text-3xl font-semibold flex-1">{title}</h1>
+  // Find selected range details
+  const selectedRange = TIME_RANGES.find((r) => r.key === range);
+  const durationMs = selectedRange?.ms ?? 3 * 60 * 60 * 1000; // fallback to 3hr
 
-      <TimeRangeDropdown
-        range={range}
-        setRange={setRange}
-        TIME_RANGES={TIME_RANGES}
-      />
+  // Get current & start time in UK timezone
+  const now = new Date();
+  const endTimeUK = new Date(
+    now.toLocaleString("en-GB", { timeZone: "Europe/London" })
+  );
+  const startTimeUK = new Date(endTimeUK.getTime() - durationMs);
+
+  const formatTime = (date: Date) =>
+    date.toLocaleTimeString("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+  const timeRangeDisplay = `${formatTime(startTimeUK)} - ${formatTime(
+    endTimeUK
+  )} (UK Time)`;
+
+  return (
+    <nav className="bg-gray-800 text-white px-6 py-4 flex flex-col gap-2 border-b h-auto border-gray-300">
+      <div className="flex items-center gap-6">
+        <img src={logo} alt="Logo" className="h-8" />
+        <h1 className="text-xl 2xl:text-3xl font-semibold flex-1">{title}</h1>
+
+        <TimeRangeDropdown
+          range={range}
+          setRange={setRange}
+          TIME_RANGES={TIME_RANGES}
+        />
+        <div className="text-xl text-gray-300 text-right">
+          {timeRangeDisplay}
+        </div>
+      </div>
     </nav>
   );
 };

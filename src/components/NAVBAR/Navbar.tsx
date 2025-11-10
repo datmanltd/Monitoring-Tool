@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import { useTimeRange } from "../../contexts/TimeRangeContext";
@@ -10,33 +11,42 @@ const PAGE_TITLES: Record<string, string> = {
   dbl: "LAMBDA & DATABASE MONITORING",
 };
 
+const REFRESH_INTERVAL_MS = 60 * 1000; // 1 minute auto-refresh
+
 const Navbar = () => {
   const location = useLocation();
   const { range, setRange } = useTimeRange();
+  const [timeRangeDisplay, setTimeRangeDisplay] = useState("");
 
   const currentPath = location.pathname.split("/")[1];
   const title = PAGE_TITLES[currentPath] || "Dashboard";
 
-  // Find selected range details
-  const selectedRange = TIME_RANGES.find((r) => r.key === range);
-  const durationMs = selectedRange?.ms ?? 3 * 60 * 60 * 1000; // fallback to 3hr
+  const updateTimeDisplay = () => {
+    const selectedRange = TIME_RANGES.find((r) => r.key === range);
+    const durationMs = selectedRange?.ms ?? 3 * 60 * 60 * 1000; // fallback to 3hr
 
-  // Get current & start time in UK timezone
-  const now = new Date();
-  const endTimeUK = new Date(
-    now.toLocaleString("en-GB", { timeZone: "Europe/London" })
-  );
-  const startTimeUK = new Date(endTimeUK.getTime() - durationMs);
+    const now = new Date();
+    const endTimeUK = new Date(
+      now.toLocaleString("en-GB", { timeZone: "Europe/London" })
+    );
+    const startTimeUK = new Date(endTimeUK.getTime() - durationMs);
 
-  const formatTime = (date: Date) =>
-    date.toLocaleTimeString("en-GB", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    const formatTime = (date: Date) =>
+      date.toLocaleTimeString("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
 
-  const timeRangeDisplay = `${formatTime(startTimeUK)} - ${formatTime(
-    endTimeUK
-  )} (UK Time)`;
+    setTimeRangeDisplay(
+      `${formatTime(startTimeUK)} - ${formatTime(endTimeUK)} (UK Time)`
+    );
+  };
+
+  useEffect(() => {
+    updateTimeDisplay(); // initial call
+    const interval = setInterval(updateTimeDisplay, REFRESH_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, [range]);
 
   return (
     <nav className="bg-gray-800 text-white px-6 py-4 flex flex-col gap-2 border-b h-auto border-gray-300">
@@ -49,7 +59,7 @@ const Navbar = () => {
           setRange={setRange}
           TIME_RANGES={TIME_RANGES}
         />
-        <div className="text-xl text-gray-300 text-right">
+        <div className="text-xl text-gray-300 text-right whitespace-nowrap">
           {timeRangeDisplay}
         </div>
       </div>

@@ -9,6 +9,6 @@ export const applyTimeRange = (url: string, range: string) => {
     return `${url}&from=${startOfDay.getTime()}&to=${now}`;
   }
 
-  const from = now - TIME_RANGE_MAP[range];
-  return `${url}&from=${from}&to=${now}&refresh=5m&__feature.dashboardSceneSolo=true`;
+   const from = TIME_RANGE_MAP[range];
+   return `${url}&from=now-${from}&to=now&refresh=5m&__feature.dashboardSceneSolo=true`;
 };

@@ -54,7 +54,7 @@ export const PAYMENTS_GRAPHS: string[] = [
   `https://grafana.datman.tools/d-solo/kugxgcb/live-wow?orgId=1&timezone=Europe%2FLondon&panelId=panel-5&__feature.dashboardSceneSolo=true"`,
   `https://grafana.datman.tools/d-solo/kugxgcb/live-wow?orgId=1&timezone=Europe%2FLondon&panelId=panel-1&__feature.dashboardSceneSolo=true`,
   `https://grafana.datman.tools/d-solo/kugxgcb/live-wow?orgId=1&timezone=Europe%2FLondon&panelId=panel-3&__feature.dashboardSceneSolo=true`,
-  `https://grafana.datman.tools/d-solo/kugxgcb/live-wow?orgId=1&timezone=Europe%2FLondon&__feature.dashboardSceneSolo=true`,
+  `https://grafana.datman.tools/d-solo/kugxgcb/live-wow?orgId=1&timezone=Europe%2FLondon&panelId=panel-3&__feature.dashboardSceneSolo=true`,
   `https://grafana.datman.tools/d-solo/kugxgcb/live-wow?orgId=1&timezone=Europe%2FLondon&panelId=panel-4&__feature.dashboardSceneSolo=true`,
 ];
 

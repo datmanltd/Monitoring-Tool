@@ -4,6 +4,7 @@ import logo from "../../assets/logo.png";
 import { useTimeRange } from "../../contexts/TimeRangeContext";
 import TimeRangeDropdown from "../../helpers/TimeRangeDropdown";
 import { TIME_RANGES } from "../../helpers/Constants";
+import { Clock } from "lucide-react";
 
 const PAGE_TITLES: Record<string, string> = {
   payments: "Payments WOW MONITORING",
@@ -59,7 +60,11 @@ const Navbar = () => {
           setRange={setRange}
           TIME_RANGES={TIME_RANGES}
         />
-        <div className="text-xl text-gray-300 text-right whitespace-nowrap">
+        {/* <div className="text-2xl text-bold text-white text-right whitespace-nowrap">
+          {timeRangeDisplay}
+        </div> */}
+        <div className="flex items-center gap-2 text-2xl font-extrabold text-white text-right whitespace-nowrap bg-gray-700 px-3 py-1 rounded-xl">
+          <Clock className="w-5 h-5 text-yellow-400" />
           {timeRangeDisplay}
         </div>
       </div>

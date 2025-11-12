@@ -4,6 +4,7 @@ import Graph from "./Graph";
 import { PAYMENTS_GRAPHS } from "../../helpers/Constants";
 import { applyTimeRange } from "../../helpers/DynamicTime";
 import { useTimeRange } from "../../contexts/TimeRangeContext";
+// import { useScrollControl } from "../../contexts/ScrollControlContext";
 
 
 const INTERVAL_MS = 30000;
@@ -13,29 +14,32 @@ const GraphContainerWOW = () => {
   // const graphUrls = COUNTRY_GRAPHS[country ?? "uk"] ?? COUNTRY_GRAPHS["uk"];
   const graphUrls = PAYMENTS_GRAPHS;
   const { range } = useTimeRange();
+  // const { isPaused } = useScrollControl();
 
   const containerRef = useRef<HTMLDivElement | null>(null);
+  // const sectionIndexRef = useRef(0);
+  // const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const firstFour = graphUrls.slice(0, 4);
   const leftover = graphUrls.slice(4); // usually 1
 
   const sectionsCount = 1 + leftover.length; // 1 grid + N leftover
 
-  useEffect(() => {
-    let sectionIndex = 0;
-    const interval = setInterval(() => {
-      if (!containerRef.current) return;
+ useEffect(() => {
+   let sectionIndex = 0;
+   const interval = setInterval(() => {
+     if (!containerRef.current) return;
 
-      sectionIndex = (sectionIndex + 1) % sectionsCount;
+     sectionIndex = (sectionIndex + 1) % sectionsCount;
 
-      containerRef.current.scrollTo({
-        top: sectionIndex * window.innerHeight,
-        behavior: "smooth",
-      });
-    }, INTERVAL_MS);
+     containerRef.current.scrollTo({
+       top: sectionIndex * window.innerHeight,
+       behavior: "smooth",
+     });
+   }, INTERVAL_MS);
 
-    return () => clearInterval(interval);
-  }, [sectionsCount]);
+   return () => clearInterval(interval);
+ }, [sectionsCount]);
 
   return (
     <div

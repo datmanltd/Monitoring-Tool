@@ -4,12 +4,13 @@ import logo from "../../assets/logo.png";
 import { useTimeRange } from "../../contexts/TimeRangeContext";
 import TimeRangeDropdown from "../../helpers/TimeRangeDropdown";
 import { TIME_RANGES } from "../../helpers/Constants";
-import { Clock } from "lucide-react";
+import { Clock, Pause, Play } from "lucide-react";
+import { useScrollControl } from "../../contexts/ScrollControlContext";
 
 const PAGE_TITLES: Record<string, string> = {
-  payments: "Payments WOW MONITORING",
-  ces: "COUNTS, ERRORS & SNS MONITORING",
-  dbl: "LAMBDA & DATABASE MONITORING",
+  payments: `Payments "Week-Over-Week" MONITORING`,
+  ces: "PAYMENTS METHOD COUNTS, ERRORS & SNS",
+  dbl: "LAMBDA LATENCY & DB MONITORING",
 };
 
 const REFRESH_INTERVAL_MS = 60 * 1000; // 1 minute auto-refresh
@@ -19,6 +20,7 @@ const Navbar = () => {
   const { range, setRange } = useTimeRange();
   const [timeRangeDisplay, setTimeRangeDisplay] = useState("");
   const navigate = useNavigate();
+  const { isPaused, togglePause } = useScrollControl();
 
   const currentPath = location.pathname.split("/")[1];
   const title = PAGE_TITLES[currentPath] || "Dashboard";
@@ -40,7 +42,7 @@ const Navbar = () => {
       });
 
     setTimeRangeDisplay(
-      `${formatTime(startTimeUK)} - ${formatTime(endTimeUK)} (UK Time)`
+      `${formatTime(startTimeUK)} - ${formatTime(endTimeUK)} BST`
     );
   };
 
@@ -61,6 +63,21 @@ const Navbar = () => {
         />
         <h1 className="text-xl 2xl:text-3xl font-semibold flex-1">{title}</h1>
 
+        <button
+          onClick={togglePause}
+          className="flex items-center text-lg gap-2 bg-blue-600 hover:bg-blue-700 px-4 py-1 rounded-xl font-semibold text-white transition"
+        >
+          {isPaused ? (
+            <>
+              <Play className="w-5 h-5" /> Replay
+            </>
+          ) : (
+            <>
+              <Pause className="w-5 h-5" /> Pause
+            </>
+          )}
+        </button>
+
         <TimeRangeDropdown
           range={range}
           setRange={setRange}
@@ -69,7 +86,8 @@ const Navbar = () => {
         {/* <div className="text-2xl text-bold text-white text-right whitespace-nowrap">
           {timeRangeDisplay}
         </div> */}
-        <div className="flex items-center gap-2 text-2xl font-extrabold text-white text-right whitespace-nowrap bg-gray-700 px-3 py-1 rounded-xl">
+
+        <div className="flex items-center gap-2 text-4xl font-extrabold text-white text-right whitespace-nowrap bg-gray-700 px-3 py-1 rounded-xl">
           <Clock className="w-5 h-5 text-yellow-400" />
           {timeRangeDisplay}
         </div>

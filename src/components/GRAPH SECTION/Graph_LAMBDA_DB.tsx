@@ -3,6 +3,7 @@ import Graph from "./Graph";
 import { LAMBDA_AND_DATABASE_GRAPHS } from "../../helpers/Constants";
 import { applyTimeRange } from "../../helpers/DynamicTime";
 import { useTimeRange } from "../../contexts/TimeRangeContext";
+import { useScrollControl } from "../../contexts/ScrollControlContext";
 
 const INTERVAL_MS = 30000;
 
@@ -17,27 +18,47 @@ const Graph_LAMBDA_DB = () => {
 
   const extraGraphs = graphUrls.slice(4, 12); // these 8 graphs
 
+const { isPaused } = useScrollControl();
+
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const sectionIndexRef = useRef(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Total screens = 3 now
-  const sectionsCount = 3;
 
-  useEffect(() => {
-    let sectionIndex = 0;
+  const leftover = graphUrls.slice(4); // usually 1
 
-    const interval = setInterval(() => {
-      if (!containerRef.current) return;
+  const sectionsCount = 1 + leftover.length; // 1 grid + N leftover
 
-      sectionIndex = (sectionIndex + 1) % sectionsCount;
+ useEffect(() => {
+   // Always clear old interval before starting a new one
+   if (intervalRef.current) clearInterval(intervalRef.current);
 
-      containerRef.current.scrollTo({
-        top: sectionIndex * window.innerHeight,
-        behavior: "smooth",
-      });
-    }, INTERVAL_MS);
+   if (isPaused) return; // Stop auto-scroll while paused
 
-    return () => clearInterval(interval);
-  }, []);
+   // Reset index when resuming — ensures it restarts properly
+   sectionIndexRef.current = 0;
+   if (containerRef.current) {
+     containerRef.current.scrollTo({ top: 0, behavior: "smooth" });
+   }
+
+   // Start auto-scroll
+   intervalRef.current = setInterval(() => {
+     if (!containerRef.current) return;
+
+     sectionIndexRef.current = (sectionIndexRef.current + 1) % sectionsCount;
+
+     containerRef.current.scrollTo({
+       top: sectionIndexRef.current * window.innerHeight,
+       behavior: "smooth",
+     });
+   }, INTERVAL_MS);
+
+   // Cleanup
+   return () => {
+     if (intervalRef.current) clearInterval(intervalRef.current);
+   };
+ }, [isPaused, sectionsCount]);
+
 
   return (
     <div

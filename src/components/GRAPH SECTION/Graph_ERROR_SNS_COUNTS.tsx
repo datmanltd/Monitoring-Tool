@@ -3,6 +3,7 @@ import Graph from "./Graph";
 import { COUNT_ERRORS_SNS_GRAPHS } from "../../helpers/Constants";
 import { applyTimeRange } from "../../helpers/DynamicTime";
 import { useTimeRange } from "../../contexts/TimeRangeContext";
+import { useScrollControl } from "../../contexts/ScrollControlContext";
 
 const INTERVAL_MS = 30000;
 
@@ -19,19 +20,45 @@ const Graph_ERROR_SNS_COUNTS = () => {
 
   const sections = [section1, section2, section3, section4];
 
+ const { isPaused } = useScrollControl();
+ 
+   const sectionIndexRef = useRef(0);
+   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+ 
+ 
+   const leftover = graphUrls.slice(4); // usually 1
+ 
+   const sectionsCount = 1 + leftover.length; // 1 grid + N leftover
+ 
   useEffect(() => {
-    let sectionIndex = 0;
-    const interval = setInterval(() => {
+    // Always clear old interval before starting a new one
+    if (intervalRef.current) clearInterval(intervalRef.current);
+ 
+    if (isPaused) return; // Stop auto-scroll while paused
+ 
+    // Reset index when resuming — ensures it restarts properly
+    sectionIndexRef.current = 0;
+    if (containerRef.current) {
+      containerRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
+ 
+    // Start auto-scroll
+    intervalRef.current = setInterval(() => {
       if (!containerRef.current) return;
-      sectionIndex = (sectionIndex + 1) % sections.length;
+ 
+      sectionIndexRef.current = (sectionIndexRef.current + 1) % sectionsCount;
+ 
       containerRef.current.scrollTo({
-        top: sectionIndex * window.innerHeight,
+        top: sectionIndexRef.current * window.innerHeight,
         behavior: "smooth",
       });
     }, INTERVAL_MS);
-
-    return () => clearInterval(interval);
-  }, []);
+ 
+    // Cleanup
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [isPaused, sectionsCount]);
 
   return (
     <div

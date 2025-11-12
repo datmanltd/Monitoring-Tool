@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import { useTimeRange } from "../../contexts/TimeRangeContext";
 import TimeRangeDropdown from "../../helpers/TimeRangeDropdown";
@@ -18,6 +18,7 @@ const Navbar = () => {
   const location = useLocation();
   const { range, setRange } = useTimeRange();
   const [timeRangeDisplay, setTimeRangeDisplay] = useState("");
+  const navigate = useNavigate();
 
   const currentPath = location.pathname.split("/")[1];
   const title = PAGE_TITLES[currentPath] || "Dashboard";
@@ -52,7 +53,12 @@ const Navbar = () => {
   return (
     <nav className="bg-gray-800 text-white px-6 py-4 flex flex-col gap-2 border-b h-auto border-gray-300">
       <div className="flex items-center gap-6">
-        <img src={logo} alt="Logo" className="h-8" />
+        <img
+          src={logo}
+          alt="Logo"
+          className="h-8 cursor-pointer"
+          onClick={() => navigate("/home")}
+        />
         <h1 className="text-xl 2xl:text-3xl font-semibold flex-1">{title}</h1>
 
         <TimeRangeDropdown

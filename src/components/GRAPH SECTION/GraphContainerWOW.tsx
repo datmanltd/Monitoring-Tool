@@ -54,7 +54,7 @@ const GraphContainerWOW = () => {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [isPaused, sectionsCount]);
+  }, [isPaused, sectionsCount, range]);
 
   return (
     <div

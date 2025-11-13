@@ -25,27 +25,44 @@ const Navbar = () => {
   const currentPath = location.pathname.split("/")[1];
   const title = PAGE_TITLES[currentPath] || "Dashboard";
 
-  const updateTimeDisplay = () => {
-    const selectedRange = TIME_RANGES.find((r) => r.key === range);
-    const durationMs = selectedRange?.ms ?? 3 * 60 * 60 * 1000; // fallback to 3hr
 
-    const now = new Date();
-    const endTimeUK = new Date(
-      now.toLocaleString("en-GB", { timeZone: "Europe/London" })
-    );
-    const startTimeUK = new Date(endTimeUK.getTime() - durationMs);
+// const updateTimeDisplay = () => {
+//   const selectedRange = TIME_RANGES.find((r) => r.key === range);
+//   const durationMs = selectedRange?.ms ?? 3 * 60 * 60 * 1000; // fallback to 3hr
 
-    const formatTime = (date: Date) =>
-      date.toLocaleTimeString("en-GB", {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
+//   const now = new Date();
+//   const startTime = new Date(now.getTime() - durationMs);
 
-    setTimeRangeDisplay(
-      `${formatTime(startTimeUK)} - ${formatTime(endTimeUK)} BST`
-    );
-  };
+//   const formatTime = (date: Date) =>
+//     date.toLocaleTimeString("en-GB", {
+//       hour: "2-digit",
+//       minute: "2-digit",
+//       timeZone: "Europe/London",
+//     });
 
+//   setTimeRangeDisplay(`${formatTime(startTime)} - ${formatTime(now)} BST`);
+// };
+
+
+const updateTimeDisplay = () => {
+  const selectedRange = TIME_RANGES.find((r) => r.key === range);
+  const durationMs = selectedRange?.ms ?? 3 * 60 * 60 * 1000; // fallback to 3hr
+
+  const now = new Date();
+
+  // Calculate start time by subtracting duration
+  const startTime = new Date(now.getTime() - durationMs);
+
+  // Format both times in UK timezone
+  const formatTime = (date: Date) =>
+    date.toLocaleTimeString("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: "Europe/London",
+    });
+
+  setTimeRangeDisplay(`${formatTime(startTime)} - ${formatTime(now)} BST`);
+};
   useEffect(() => {
     updateTimeDisplay(); // initial call
     const interval = setInterval(updateTimeDisplay, REFRESH_INTERVAL_MS);

@@ -13,6 +13,7 @@ export const applyTimeRange = (url: string, range: string) => {
     last_15m: "15m",
     last_30m: "30m",
     last_1h: "1h",
+    last_2h: "2h",
     last_3h: "3h",
     last_6h: "6h",
     last_12h: "12h",
